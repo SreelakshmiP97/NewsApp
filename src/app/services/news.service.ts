@@ -8,7 +8,7 @@ import { NewsArticle } from '../models/news.interface';
   providedIn: 'root'
 })
 export class NewsService {
-  private apiUrl = 'http://localhost:3010/api/news';
+  private apiUrl = 'https://news-app-api-theta.vercel.app/api/news';
 
   constructor(private http: HttpClient) {
     console.log('NewsService constructor called');
