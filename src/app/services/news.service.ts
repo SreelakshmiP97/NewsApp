@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { map, tap, catchError } from 'rxjs/operators';
 import { NewsArticle } from '../models/news.interface';
 
 @Injectable({
@@ -14,12 +14,27 @@ export class NewsService {
     console.log('NewsService constructor called');
   }
 
+  private handleError(error: HttpErrorResponse) {
+    console.error('An error occurred:', error);
+    if (error.error instanceof ErrorEvent) {
+      console.error('Client-side error:', error.error.message);
+    } else {
+      console.error(
+        `Backend returned code ${error.status}, ` +
+        `body was: ${JSON.stringify(error.error)}`);
+    }
+    return throwError(() => new Error('Something went wrong; please try again later.'));
+  }
+
   getNews(): Observable<NewsArticle[]> {
-    console.log('NewsService getNews called');
+    console.log('NewsService getNews called with URL:', `${this.apiUrl}/all`);
     return this.http.get<NewsArticle[]>(`${this.apiUrl}/all`).pipe(
       tap(articles => {
         console.log('Raw API response:', articles);
-        articles.forEach(article => {
+        if (!articles || articles.length === 0) {
+          console.warn('No articles received from API');
+        }
+        articles?.forEach(article => {
           if (!article.images || article.images.length === 0) {
             console.warn('Article missing images:', article.title);
           } else {
@@ -27,10 +42,11 @@ export class NewsService {
           }
         });
       }),
-      map(articles => articles.map(article => ({
+      map(articles => articles?.map(article => ({
         ...article,
         images: article.images || []
-      })))
+      })) || []),
+      catchError(this.handleError)
     );
   }
 
