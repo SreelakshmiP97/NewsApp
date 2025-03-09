@@ -1,0 +1,44 @@
+<mat-card class="news-card">
+  <mat-card-header>
+    <mat-card-title>{{ article.title }}</mat-card-title>
+    <mat-card-subtitle>{{ article.source }} • {{ article.publishedDate | date }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <img mat-card-image *ngIf="article.imageUrl" [src]="article.imageUrl" [alt]="article.title">
+
+  <mat-card-content>
+    <p class="summary">{{ article.summary }}</p>
+    
+    <div class="chips-container">
+      <mat-chip color="primary" selected>
+        <mat-icon>category</mat-icon>
+        {{ article.topic }}
+      </mat-chip>
+
+      <mat-chip [color]="getSentimentColor(article.sentimentScore)" selected>
+        <mat-icon>{{ getSentimentIcon(article.sentimentScore) }}</mat-icon>
+        Sentiment: {{ article.sentimentScore | number:'1.2-2' }}
+      </mat-chip>
+    </div>
+
+    <div class="affected-entities" *ngIf="article.affectedStates.length || article.affectedPeople.length">
+      <h4>Affected Entities:</h4>
+      <div class="chips-container">
+        <mat-chip *ngFor="let state of article.affectedStates" color="accent">
+          <mat-icon>location_city</mat-icon>
+          {{ state }}
+        </mat-chip>
+        <mat-chip *ngFor="let person of article.affectedPeople" color="accent">
+          <mat-icon>person</mat-icon>
+          {{ person }}
+        </mat-chip>
+      </div>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <a mat-button color="primary" [href]="article.url" target="_blank">
+      Read More
+    </a>
+  </mat-card-actions>
+</mat-card>

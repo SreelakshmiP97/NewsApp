@@ -1,0 +1,47 @@
+<div class="news-list-container">
+  <div class="filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Search</mat-label>
+      <input matInput [(ngModel)]="searchQuery" (ngModelChange)="applyFilters()" placeholder="Search news...">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Topic</mat-label>
+      <mat-select [(ngModel)]="selectedTopic" (ngModelChange)="applyFilters()">
+        <mat-option [value]="">All Topics</mat-option>
+        <mat-option *ngFor="let topic of topics" [value]="topic">
+          {{ topic }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Source</mat-label>
+      <mat-select [(ngModel)]="selectedSource" (ngModelChange)="applyFilters()">
+        <mat-option [value]="">All Sources</mat-option>
+        <mat-option *ngFor="let source of sources" [value]="source">
+          {{ source }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="content-container">
+    <div class="loading-container" *ngIf="isLoading">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading news articles...</p>
+    </div>
+
+    <div class="news-grid" *ngIf="!isLoading">
+      <div class="news-grid-item" *ngFor="let article of filteredArticles">
+        <app-news-card [article]="article"></app-news-card>
+      </div>
+    </div>
+
+    <div class="no-results" *ngIf="!isLoading && filteredArticles.length === 0">
+      <mat-icon>search_off</mat-icon>
+      <p>No news articles found matching your criteria.</p>
+    </div>
+  </div>
+</div>
