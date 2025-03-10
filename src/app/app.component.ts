@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSidenavModule, MatSidenav } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 
 @Component({
@@ -26,7 +26,7 @@ import { MatListModule } from '@angular/material/list';
       <mat-toolbar class="app-header">
         <div class="header-content">
           <div class="logo-section">
-            <button mat-icon-button class="menu-button" (click)="toggleSidenav(sidenav)">
+            <button mat-icon-button class="menu-button" (click)="sidenav.toggle()">
               <mat-icon>menu</mat-icon>
             </button>
             <a routerLink="/" class="logo-link">
@@ -58,21 +58,21 @@ import { MatListModule } from '@angular/material/list';
       </mat-toolbar>
 
       <mat-sidenav-container class="sidenav-container">
-        <mat-sidenav #sidenav mode="over" class="app-sidenav">
+        <mat-sidenav #sidenav mode="over" class="app-sidenav" [autoFocus]="false">
           <mat-nav-list>
-            <a mat-list-item routerLink="/" (click)="sidenav.close()">
+            <a mat-list-item routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="sidenav.close()">
               <mat-icon matListItemIcon>home</mat-icon>
               <span matListItemTitle>Home</span>
             </a>
-            <a mat-list-item routerLink="/categories" (click)="sidenav.close()">
+            <a mat-list-item routerLink="/categories" routerLinkActive="active" (click)="sidenav.close()">
               <mat-icon matListItemIcon>category</mat-icon>
               <span matListItemTitle>Categories</span>
             </a>
-            <a mat-list-item routerLink="/sources" (click)="sidenav.close()">
+            <a mat-list-item routerLink="/sources" routerLinkActive="active" (click)="sidenav.close()">
               <mat-icon matListItemIcon>source</mat-icon>
               <span matListItemTitle>Sources</span>
             </a>
-            <a mat-list-item routerLink="/bookmarks" (click)="sidenav.close()">
+            <a mat-list-item routerLink="/bookmarks" routerLinkActive="active" (click)="sidenav.close()">
               <mat-icon matListItemIcon>bookmarks</mat-icon>
               <span matListItemTitle>Bookmarks</span>
             </a>
@@ -121,9 +121,18 @@ import { MatListModule } from '@angular/material/list';
       left: 0;
       right: 0;
       z-index: 1000;
-      background-color: #ffffff;
-      color: rgba(0, 0, 0, 0.87);
+      background-color: white !important;
+      color: white !important;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      ::ng-deep .mat-mdc-icon-button {
+        --mdc-icon-button-icon-color: white;
+        color: white !important;
+      }
+
+      ::ng-deep .mdc-icon-button {
+        color: white !important;
+      }
     }
 
     .header-content {
@@ -134,6 +143,7 @@ import { MatListModule } from '@angular/material/list';
       max-width: 1200px;
       margin: 0 auto;
       padding: 0 16px;
+      height: 64px;
     }
 
     .logo-section {
@@ -144,16 +154,24 @@ import { MatListModule } from '@angular/material/list';
 
     .menu-button {
       display: none;
-      color: var(--mat-primary-color);
+      color: white !important;
+      margin-right: 8px;
+
+      mat-icon {
+        color: black !important;
+      }
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
     }
 
     .logo-link {
       text-decoration: none;
-      color: var(--mat-primary-color);
+      color: white;
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 8px 0;
     }
 
     .logo-container {
@@ -166,14 +184,14 @@ import { MatListModule } from '@angular/material/list';
       font-size: 32px;
       width: 32px;
       height: 32px;
-      color: var(--mat-primary-color);
+      color: #212121;
     }
 
     .logo-text {
       font-size: 24px;
       font-weight: 500;
       letter-spacing: 0.5px;
-      color: var(--mat-primary-color);
+      color: #212121;
     }
 
     .nav-links {
@@ -186,16 +204,55 @@ import { MatListModule } from '@angular/material/list';
         align-items: center;
         gap: 8px;
         font-weight: 500;
-        color: rgba(0, 0, 0, 0.87);
+       color: #212121;
         text-decoration: none;
         padding: 8px 16px;
         border-radius: 8px;
         transition: all 0.2s ease-in-out;
         
         mat-icon {
-          color: rgba(0, 0, 0, 0.54);
+         color: #212121;
           margin-right: 4px;
           transition: all 0.2s ease-in-out;
+        }
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        &.active {
+          background-color: rgba(255, 255, 255, 0.2);
+        }
+      }
+    }
+
+    .sidenav-container {
+      flex: 1;
+      margin-top: 64px;
+      background-color: #ffffff;
+    }
+
+    .app-sidenav {
+      width: 280px;
+      background-color: #ffffff !important;
+      border-right: 1px solid rgba(0, 0, 0, 0.12);
+
+      ::ng-deep .mat-drawer-inner-container {
+        background-color: #ffffff;
+      }
+    }
+
+    mat-nav-list {
+      padding: 16px;
+
+      a {
+        border-radius: 8px;
+        margin-bottom: 8px;
+        color: rgba(0, 0, 0, 0.87);
+
+        mat-icon {
+          color: rgba(0, 0, 0, 0.54);
+          margin-right: 16px;
         }
 
         &:hover {
@@ -216,15 +273,6 @@ import { MatListModule } from '@angular/material/list';
           }
         }
       }
-    }
-
-    .sidenav-container {
-      flex: 1;
-      margin-top: 64px;
-    }
-
-    .app-sidenav {
-      width: 280px;
     }
 
     .main-content {
@@ -284,11 +332,17 @@ import { MatListModule } from '@angular/material/list';
 
     @media (max-width: 768px) {
       .menu-button {
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .nav-links {
         display: none;
+      }
+
+      .logo-text {
+        font-size: 20px;
       }
 
       .footer-content {
@@ -305,9 +359,5 @@ import { MatListModule } from '@angular/material/list';
   `]
 })
 export class AppComponent {
-  title = 'newsapp';
-
-  toggleSidenav(sidenav: any) {
-    sidenav.toggle();
-  }
+  @ViewChild('sidenav') sidenav!: MatSidenav;
 }
