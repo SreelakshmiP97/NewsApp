@@ -5,7 +5,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatRippleModule } from '@angular/material/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { NewsArticle } from '../../models/news.interface';
+import { BookmarkService } from '../../services/bookmark.service';
 
 @Component({
   selector: 'app-news-card',
@@ -16,7 +18,8 @@ import { NewsArticle } from '../../models/news.interface';
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
-    MatRippleModule
+    MatRippleModule,
+    MatTooltipModule
   ],
   template: `
     <mat-card class="news-card mat-elevation-z1" matRipple>
@@ -49,10 +52,21 @@ import { NewsArticle } from '../../models/news.interface';
       </mat-card-content>
 
       <mat-card-actions>
-        <a mat-button color="primary" [href]="article.url" target="_blank">
-          READ MORE
-          <mat-icon>arrow_forward</mat-icon>
-        </a>
+        <div class="card-actions-container">
+          <a mat-button color="primary" [href]="article.url" target="_blank">
+            READ MORE
+            <mat-icon>arrow_forward</mat-icon>
+          </a>
+          <button 
+            mat-icon-button 
+            class="bookmark-button"
+            [class.bookmarked]="isBookmarked"
+            (click)="toggleBookmark($event)"
+            [matTooltip]="isBookmarked ? 'Remove from bookmarks' : 'Add to bookmarks'"
+          >
+            <mat-icon>{{ isBookmarked ? 'bookmark' : 'bookmark_border' }}</mat-icon>
+          </button>
+        </div>
       </mat-card-actions>
     </mat-card>
   `,
@@ -228,6 +242,35 @@ import { NewsArticle } from '../../models/news.interface';
       overflow: hidden;
     }
 
+    .card-actions-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .bookmark-button {
+      color: var(--mat-primary-color);
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        transform: scale(1.1);
+      }
+
+      &.bookmarked {
+        color: #ffd700;
+        
+        mat-icon {
+          filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+      }
+
+      mat-icon {
+        transition: all 0.2s ease-in-out;
+        color: black;
+      }
+    }
+
     mat-card-actions {
       padding: var(--spacing-md);
       border-top: 1px solid var(--mat-card-divider-color);
@@ -253,6 +296,22 @@ import { NewsArticle } from '../../models/news.interface';
 })
 export class NewsCardComponent {
   @Input() article!: NewsArticle;
+  isBookmarked = false;
+
+  constructor(private bookmarkService: BookmarkService) {}
+
+  ngOnInit(): void {
+    this.isBookmarked = this.bookmarkService.isBookmarked(this.article);
+    this.bookmarkService.getBookmarks().subscribe(() => {
+      this.isBookmarked = this.bookmarkService.isBookmarked(this.article);
+    });
+  }
+
+  toggleBookmark(event: Event): void {
+    event.stopPropagation();
+    this.bookmarkService.toggleBookmark(this.article);
+    this.isBookmarked = this.bookmarkService.isBookmarked(this.article);
+  }
 
   formatDate(date: string): string {
     return new Date(date).toLocaleDateString('en-US', {

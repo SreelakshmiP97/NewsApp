@@ -6,6 +6,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule, MatSidenav } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
+import { NewsFilterComponent } from './components/news-filter/news-filter.component';
+import { NewsFilter } from './models/news.interface';
 
 @Component({
   selector: 'app-root',
@@ -19,7 +21,8 @@ import { MatListModule } from '@angular/material/list';
     MatButtonModule,
     MatIconModule,
     MatSidenavModule,
-    MatListModule
+    MatListModule,
+    NewsFilterComponent
   ],
   template: `
     <div class="app-container">
@@ -77,6 +80,9 @@ import { MatListModule } from '@angular/material/list';
               <span matListItemTitle>Bookmarks</span>
             </a>
           </mat-nav-list>
+
+          <mat-divider></mat-divider>
+
         </mat-sidenav>
 
         <mat-sidenav-content>
@@ -330,6 +336,10 @@ import { MatListModule } from '@angular/material/list';
       }
     }
 
+    .filter-container {
+      padding: 16px;
+    }
+
     @media (max-width: 768px) {
       .menu-button {
         display: flex;
@@ -360,4 +370,9 @@ import { MatListModule } from '@angular/material/list';
 })
 export class AppComponent {
   @ViewChild('sidenav') sidenav!: MatSidenav;
+
+  onFilterChange(filter: NewsFilter) {
+    console.log('Filter changed:', filter);
+    // TODO: Implement filter logic in your news service
+  }
 }
