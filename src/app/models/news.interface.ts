@@ -8,6 +8,7 @@ export interface NewsArticle {
   topic: string;
   publishedAt: string;
   sentimentScore: number;
+  sentimentLabel: string;
   images: string[];
   affectedEntities: string[];
 }
@@ -41,4 +42,6 @@ export enum NewsSource {
 export interface NewsFilter {
   categories: NewsCategory[];
   sources: NewsSource[];
+  startDate?: Date;
+  endDate?: Date;
 } 

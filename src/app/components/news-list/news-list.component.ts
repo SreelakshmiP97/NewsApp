@@ -14,6 +14,8 @@ import { NewsService } from '../../services/news.service';
 import { NewsArticle } from '../../models/news.interface';
 import { catchError, finalize } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 interface FeaturedSlide {
   title: string;
@@ -36,7 +38,9 @@ interface FeaturedSlide {
     MatProgressSpinnerModule,
     MatIconModule,
     MatButtonModule,
-    NewsCardComponent
+    NewsCardComponent,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   template: `
     <div class="news-list-container">
@@ -63,6 +67,8 @@ interface FeaturedSlide {
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
       </div>
+
+
 
       <div *ngIf="isLoading" class="loading-container">
         <mat-spinner diameter="40"></mat-spinner>
@@ -119,6 +125,69 @@ interface FeaturedSlide {
         flex: 1;
         min-width: 200px;
         max-width: 100%;
+      }
+    }
+
+    .date-filter-section {
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .date-range-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      color: var(--mat-primary-color);
+      font-weight: 500;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    .date-filters {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .date-inputs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .date-separator {
+      color: var(--mat-card-subtitle-text-color);
+      margin: 0 4px;
+      font-size: 14px;
+    }
+
+    mat-form-field {
+      &.mat-mdc-form-field {
+        width: 160px;
+      }
+    }
+
+    .clear-dates-btn {
+      height: 40px;
+      padding: 0 16px;
+      white-space: nowrap;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        margin-right: 4px;
       }
     }
 
@@ -197,6 +266,31 @@ interface FeaturedSlide {
         grid-template-columns: minmax(0, 1fr);
         gap: 16px;
       }
+
+      .date-filters {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+
+      .date-inputs {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .date-separator {
+        display: none;
+      }
+
+      mat-form-field {
+        &.mat-mdc-form-field {
+          width: 100%;
+        }
+      }
+
+      .clear-dates-btn {
+        width: 100%;
+      }
     }
   `]
 })
@@ -211,6 +305,8 @@ export class NewsListComponent implements OnInit, OnDestroy {
   isLoading: boolean = true;
   error: string | null = null;
   cols: number = 1;
+  startDate: Date | null = null;
+  endDate: Date | null = null;
 
   // Featured carousel properties
   featuredSlides: FeaturedSlide[] = [];
@@ -277,6 +373,7 @@ export class NewsListComponent implements OnInit, OnDestroy {
       console.log('Topics:', this.topics);
       console.log('Sources:', this.sources);
       this.setupFeaturedSlides();
+      this.filterNewsByDate();
     });
   }
 
@@ -325,5 +422,32 @@ export class NewsListComponent implements OnInit, OnDestroy {
 
   goToSlide(index: number): void {
     this.currentSlide = index;
+  }
+
+  filterNewsByDate() {
+    if (!this.startDate && !this.endDate) {
+      this.filteredArticles = this.articles;
+      return;
+    }
+
+    this.filteredArticles = this.articles.filter(article => {
+      const articleDate = new Date(article.publishedAt);
+      
+      if (this.startDate && this.endDate) {
+        return articleDate >= this.startDate && articleDate <= this.endDate;
+      } else if (this.startDate) {
+        return articleDate >= this.startDate;
+      } else if (this.endDate) {
+        return articleDate <= this.endDate;
+      }
+      
+      return true;
+    });
+  }
+
+  clearDateFilters() {
+    this.startDate = null;
+    this.endDate = null;
+    this.filterNewsByDate();
   }
 }

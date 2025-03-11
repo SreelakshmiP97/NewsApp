@@ -4,6 +4,10 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { NewsCategory, NewsSource, NewsFilter } from '../../models/news.interface';
 
 @Component({
@@ -14,10 +18,36 @@ import { NewsCategory, NewsSource, NewsFilter } from '../../models/news.interfac
     MatExpansionModule,
     MatCheckboxModule,
     FormsModule,
-    MatDividerModule
+    MatDividerModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   template: `
     <mat-accordion class="filters-accordion">
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Date Range</mat-panel-title>
+        </mat-expansion-panel-header>
+        
+        <div class="date-range-container">
+          <mat-form-field appearance="outline" class="date-field">
+            <mat-label>Start Date</mat-label>
+            <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate" (dateChange)="updateFilters()">
+            <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="date-field">
+            <mat-label>End Date</mat-label>
+            <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate" (dateChange)="updateFilters()">
+            <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+
       <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title>Categories</mat-panel-title>
@@ -82,6 +112,28 @@ import { NewsCategory, NewsSource, NewsFilter } from '../../models/news.interfac
         font-size: 14px;
       }
     }
+
+    .date-range-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 8px 0;
+    }
+
+    .date-field {
+      width: 100%;
+    }
+
+    ::ng-deep {
+      .mat-expansion-panel-body {
+        padding: 0 16px 16px !important;
+      }
+
+      .mat-form-field-wrapper {
+        margin: 0;
+        padding: 0;
+      }
+    }
   `]
 })
 export class NewsFilterComponent {
@@ -92,6 +144,8 @@ export class NewsFilterComponent {
 
   selectedCategories: { [key: string]: boolean } = {};
   selectedSources: { [key: string]: boolean } = {};
+  startDate: Date | null = null;
+  endDate: Date | null = null;
 
   constructor() {
     // Initialize all checkboxes to false
@@ -110,7 +164,9 @@ export class NewsFilterComponent {
 
     this.filterChange.emit({
       categories: selectedCategories,
-      sources: selectedSources
+      sources: selectedSources,
+      startDate: this.startDate || undefined,
+      endDate: this.endDate || undefined
     });
   }
 } 

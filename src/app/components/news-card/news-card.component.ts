@@ -35,8 +35,8 @@ import { BookmarkService } from '../../services/bookmark.service';
           </div>
           <div class="sentiment-chip" [class]="getSentimentClass()">
             <mat-icon>{{ getSentimentIcon() }}</mat-icon>
-            <span>{{ getSentimentText() }}</span>
-            <span class="score">({{ article.sentimentScore | number:'1.2-2' }})</span>
+            <span>{{ article.sentimentLabel }}</span>
+            <span class="score">{{ article.sentimentScore | number:'1.2-2' }}</span>
           </div>
         </div>
       </div>
@@ -162,8 +162,6 @@ import { BookmarkService } from '../../services/bookmark.service';
         display: flex;
         align-items: center;
         gap: 6px;
-        background-color: rgba(0, 0, 0, 0.75);
-        color: white;
         padding: 6px 12px;
         border-radius: 20px;
         font-size: 13px;
@@ -171,16 +169,19 @@ import { BookmarkService } from '../../services/bookmark.service';
         backdrop-filter: blur(4px);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
-        &.positive {
-          background-color: rgba(76, 175, 80, 0.9);
+        &.Positive {
+          background-color: rgba(76, 175, 80, 0.95);
+          color: white;
         }
 
-        &.negative {
-          background-color: rgba(244, 67, 54, 0.9);
+        &.Negative {
+          background-color: rgba(244, 67, 54, 0.95);
+          color: white;
         }
 
-        &.neutral {
-          background-color: rgba(158, 158, 158, 0.9);
+        &.Neutral {
+          background-color: rgba(158, 158, 158, 0.95);
+          color: white;
         }
 
         mat-icon {
@@ -191,7 +192,11 @@ import { BookmarkService } from '../../services/bookmark.service';
 
         .score {
           font-size: 12px;
-          opacity: 0.8;
+          opacity: 0.9;
+          font-weight: 400;
+          background: rgba(0, 0, 0, 0.2);
+          padding: 2px 6px;
+          border-radius: 10px;
         }
       }
     }
@@ -322,23 +327,17 @@ export class NewsCardComponent {
   }
 
   getSentimentClass(): string {
-    const score = this.article.sentimentScore;
-    if (score > 0.2) return 'positive';
-    if (score < -0.2) return 'negative';
-    return 'neutral';
+    return this.article.sentimentLabel;
   }
 
   getSentimentIcon(): string {
-    const score = this.article.sentimentScore;
-    if (score > 0.2) return 'sentiment_very_satisfied';
-    if (score < -0.2) return 'sentiment_very_dissatisfied';
-    return 'sentiment_neutral';
-  }
-
-  getSentimentText(): string {
-    const score = this.article.sentimentScore;
-    if (score > 0.2) return 'Positive';
-    if (score < -0.2) return 'Negative';
-    return 'Neutral';
+    switch (this.article.sentimentLabel) {
+      case 'Positive':
+        return 'sentiment_very_satisfied';
+      case 'Negative':
+        return 'sentiment_very_dissatisfied';
+      default:
+        return 'sentiment_neutral';
+    }
   }
 }
