@@ -44,14 +44,7 @@ import { NewsFilter } from './models/news.interface';
               <mat-icon>home</mat-icon>
               Home
             </a>
-            <a mat-button routerLink="/categories" routerLinkActive="active">
-              <mat-icon>category</mat-icon>
-              Categories
-            </a>
-            <a mat-button routerLink="/sources" routerLinkActive="active">
-              <mat-icon>source</mat-icon>
-              Sources
-            </a>
+          
             <a mat-button routerLink="/bookmarks" routerLinkActive="active">
               <mat-icon>bookmarks</mat-icon>
               Bookmarks
@@ -67,14 +60,7 @@ import { NewsFilter } from './models/news.interface';
               <mat-icon matListItemIcon>home</mat-icon>
               <span matListItemTitle>Home</span>
             </a>
-            <a mat-list-item routerLink="/categories" routerLinkActive="active" (click)="sidenav.close()">
-              <mat-icon matListItemIcon>category</mat-icon>
-              <span matListItemTitle>Categories</span>
-            </a>
-            <a mat-list-item routerLink="/sources" routerLinkActive="active" (click)="sidenav.close()">
-              <mat-icon matListItemIcon>source</mat-icon>
-              <span matListItemTitle>Sources</span>
-            </a>
+
             <a mat-list-item routerLink="/bookmarks" routerLinkActive="active" (click)="sidenav.close()">
               <mat-icon matListItemIcon>bookmarks</mat-icon>
               <span matListItemTitle>Bookmarks</span>
